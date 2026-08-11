@@ -95,11 +95,18 @@ namespace fortindwindows
 
                         NativeMethods.DrawThemeTextEx(hTheme, memDc, 0, 0, text, text.Length, dtFlags, ref rect, ref options);
 
-                        // FUCKING HEELL
+                        
+                        NativeMethods.BLENDFUNCTION blend = new NativeMethods.BLENDFUNCTION();
+                        blend.BlendOp = NativeMethods.AC_SRC_OVER;
+                        blend.BlendFlags = 0;
+                        blend.SourceConstantAlpha = 255;
+                        blend.AlphaFormat = NativeMethods.AC_SRC_ALPHA;
+
                         IntPtr destHdc = destination.GetHdc();
                         try
                         {
-                            NativeMethods.BitBlt(destHdc, bounds.Left, bounds.Top, bounds.Width, bounds.Height, memDc, 0, 0, NativeMethods.SRCCOPY);
+                            NativeMethods.AlphaBlend(destHdc, bounds.Left, bounds.Top, bounds.Width, bounds.Height,
+                                memDc, 0, 0, bounds.Width, bounds.Height, blend);
                         }
                         finally
                         {
@@ -144,6 +151,18 @@ namespace fortindwindows
             public const uint DTT_COMPOSITED = 0x00002000;
 
             public const int SRCCOPY = 0x00CC0020;
+
+            public const byte AC_SRC_OVER = 0x00;
+            public const byte AC_SRC_ALPHA = 0x01;
+
+            [StructLayout(LayoutKind.Sequential)]
+            public struct BLENDFUNCTION
+            {
+                public byte BlendOp;
+                public byte BlendFlags;
+                public byte SourceConstantAlpha;
+                public byte AlphaFormat;
+            }
 
             [StructLayout(LayoutKind.Sequential)]
             public struct RECT
@@ -220,6 +239,10 @@ namespace fortindwindows
             [DllImport("gdi32.dll")]
             public static extern bool BitBlt(IntPtr hdcDest, int xDest, int yDest, int width, int height,
                 IntPtr hdcSrc, int xSrc, int ySrc, int rop);
+
+            [DllImport("msimg32.dll")]
+            public static extern bool AlphaBlend(IntPtr hdcDest, int xDest, int yDest, int widthDest, int heightDest,
+                IntPtr hdcSrc, int xSrc, int ySrc, int widthSrc, int heightSrc, BLENDFUNCTION blendFunction);
         }
     }
 }

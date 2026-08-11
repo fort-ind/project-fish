@@ -85,16 +85,28 @@ namespace fortindwindows
                 g.Clear(fallback);
             }
 
-            if (_hot || _selected)
+            if (_hot)
             {
+                
                 using (GraphicsPath path = RoundedRect(bounds, 3))
                 {
-                    int alpha = _selected ? 90 : 55;
                     Color highlight = _glassMode ? Color.White : SystemColors.ControlLight;
-                    using (SolidBrush brush = new SolidBrush(Color.FromArgb(alpha, highlight)))
+                    using (SolidBrush brush = new SolidBrush(Color.FromArgb(40, highlight)))
                     {
                         g.FillPath(brush, path);
                     }
+                }
+            }
+
+            if (_selected)
+            {
+                
+                const int barHeight = 3;
+                Rectangle barRect = new Rectangle(4, Height - barHeight - 2, Width - 8, barHeight);
+                Color accent = _glassMode ? Color.FromArgb(230, 90, 170, 235) : SystemColors.Highlight;
+                using (SolidBrush brush = new SolidBrush(accent))
+                {
+                    g.FillRectangle(brush, barRect);
                 }
             }
 
