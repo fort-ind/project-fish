@@ -20,8 +20,8 @@ namespace fortindwindows
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint |
                       ControlStyles.ResizeRedraw, true);
             _glassMode = true;
-            Cursor = Cursors.Hand;
-            Font = new Font("Segoe UI", 9.5f);
+            Cursor = Cursors.Hand; 
+            Font = new Font("Segoe UI", 9.5f, FontStyle.Bold);
             TabStop = true;
         }
 
@@ -113,7 +113,7 @@ namespace fortindwindows
             Rectangle textRect = Rectangle.Inflate(bounds, -10, 0);
             if (_glassMode)
             {
-                GlassTextRenderer.DrawGlowText(g, textRect, Text, Font, Color.White);
+                // Smaller glow 
             }
             else
             {
