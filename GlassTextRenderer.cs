@@ -81,16 +81,9 @@ namespace fortindwindows
                         options.dwSize = Marshal.SizeOf(typeof(NativeMethods.DTTOPTS));
                         options.crText = ColorTranslator.ToWin32(color);
 
-                        uint textFlags = NativeMethods.DTT_COMPOSITED | NativeMethods.DTT_TEXTCOLOR;
-
-
-                        if (glowSize > 0)
-                        {
-                            textFlags |= NativeMethods.DTT_GLOWSIZE;
-                            options.iGlowSize = glowSize;
-                        }
-
-                        options.dwFlags = textFlags;
+                        // DTT_GLOWSIZE isn't a switch that turns glow on (insert ryni crashing out)
+                        options.iGlowSize = glowSize > 0 ? glowSize : 0;
+                        options.dwFlags = NativeMethods.DTT_COMPOSITED | NativeMethods.DTT_TEXTCOLOR | NativeMethods.DTT_GLOWSIZE;
 
                         NativeMethods.RECT rect = new NativeMethods.RECT();
                         rect.Left = 0;
