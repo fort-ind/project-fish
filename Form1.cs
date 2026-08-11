@@ -99,11 +99,15 @@ namespace fortindwindows
         {
             Rectangle titleRect = new Rectangle(16, 0, 145, panelGlassNav.Height);
 
-            using (Font titleFont = new Font("Segoe UI", 13f, FontStyle.Regular))
+            // Semibold + no glow, same reasoning as GlassNavButton: at UI text
+            // sizes (even 13pt) DTT_GLOWSIZE blurs the letterforms rather than
+            // haloing them, and it's now an explicit "0 means 0" call rather than
+            // the old default-glow overload.
+            using (Font titleFont = new Font("Segoe UI", 13f, FontStyle.Bold))
             {
                 if (_glassActive)
                 {
-                    GlassTextRenderer.DrawGlowText(e.Graphics, titleRect, TitleText, titleFont, Color.White);
+                    GlassTextRenderer.DrawGlowText(e.Graphics, titleRect, TitleText, titleFont, Color.White, 0);
                 }
                 else
                 {
