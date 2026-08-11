@@ -1,12 +1,5 @@
 name: Build installer
 
-# Builds fort.ind (legacy) with MSBuild and packages it into an MSI with the
-# WiX CLI, then uploads the MSI as a workflow artifact. No GitHub Release is
-# created - grab the installer from the run's "Artifacts" section.
-#
-# NOTE: this runs the build on windows-latest, which is just the CI build
-# machine. It has no bearing on the app itself, which still targets
-# .NET Framework 4.7.2 / Windows 7 at runtime - see CLAUDE.md.
 
 on:
   push:
@@ -21,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
@@ -50,7 +43,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "wix build failed with exit code $LASTEXITCODE" }
 
       - name: Upload installer artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: fortindwindows-installer
           path: installer\fortindwindows.msi
