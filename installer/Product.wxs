@@ -1,0 +1,76 @@
+<!--
+  WiX v4+ installer definition for fort.ind (legacy).
+
+  Built with the `wix build` CLI (see .github/workflows/build-installer.yml).
+  Pinned to a pre-v6 WiX version deliberately, to avoid the Open Source
+  Maintenance Fee EULA gate that WiX v7 enforces on every command - see
+  https://docs.firegiant.com/wix/osmf/. This app is well under the $10k/yr
+  revenue threshold where the fee would even apply, but v7 still requires
+  accepting the EULA just to run the tool, and nothing here needs anything
+  from v6/v7, so staying on v4/v5 sidesteps that entirely.
+
+  Two preprocessor variables are supplied at build time:
+    - BuildOutputDir : path to the MSBuild output folder containing fortindwindows.exe
+    - ProductVersion : four-part version string, e.g. 1.0.0.42
+
+  Notes for future maintenance:
+    - UpgradeCode below is fixed on purpose - never change it, or Windows will
+      treat future versions as a different product instead of an upgrade.
+    - InstallerVersion 200 + no explicit Platform means this MSI installs into
+      "Program Files (x86)" on 64-bit Windows and "Program Files" on 32-bit
+      Windows - matches an AnyCPU WinForms build and keeps things simple on
+      32-bit Windows 7 installs too.
+    - There's no WixUI dialog set yet (installs silently with the default
+      minimal UI). Add the WixToolset.UI.wixext extension + a UI reference
+      later if a real install wizard is wanted.
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="fort.ind (legacy)"
+           Language="1033"
+           Version="$(var.ProductVersion)"
+           Manufacturer="fort.ind"
+           UpgradeCode="01EE8D8C-F5C3-443E-8C50-C68973F6691D"
+           InstallerVersion="200">
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="ProductFeature" Title="fort.ind (legacy)" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="ApplicationShortcut" />
+    </Feature>
+
+    <StandardDirectory Id="ProgramFilesFolder">
+      <Directory Id="INSTALLFOLDER" Name="fort.ind (legacy)" />
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="fort.ind (legacy)" />
+    </StandardDirectory>
+
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Component Id="MainExecutable" Guid="6F1A6B2E-6C8E-4E4E-9E3B-2B2B7C6A0E11">
+        <File Id="fortindwindowsEXE" Source="$(var.BuildOutputDir)\fortindwindows.exe" KeyPath="yes" />
+      </Component>
+      <Component Id="AppConfig" Guid="9B7B7A2C-3A2B-4E63-9F1E-7B7C6A0E11AA">
+        <File Id="fortindwindowsCONFIG" Source="$(var.BuildOutputDir)\fortindwindows.exe.config" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="4C2E3B6A-7D1F-4A9C-8E2D-1A2B3C4D5E6F">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="fort.ind"
+                  Description="fort.ind (legacy)"
+                  Target="[INSTALLFOLDER]fortindwindows.exe"
+                  WorkingDirectory="INSTALLFOLDER" />
+        <RemoveFolder Id="CleanUpShortcut" Directory="ApplicationProgramsFolder" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\fort.ind\fortindwindows" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <ComponentGroup Id="ProductComponents">
+      <ComponentRef Id="MainExecutable" />
+      <ComponentRef Id="AppConfig" />
+    </ComponentGroup>
+  </Package>
+</Wix>

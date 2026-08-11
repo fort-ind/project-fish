@@ -1,0 +1,57 @@
+name: Build installer
+
+# Builds fort.ind (legacy) with MSBuild and packages it into an MSI with the
+# WiX CLI, then uploads the MSI as a workflow artifact. No GitHub Release is
+# created - grab the installer from the run's "Artifacts" section.
+#
+# NOTE: this runs the build on windows-latest, which is just the CI build
+# machine. It has no bearing on the app itself, which still targets
+# .NET Framework 4.7.2 / Windows 7 at runtime - see CLAUDE.md.
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Restore NuGet packages
+        run: nuget restore fortindwindows.sln
+
+      - name: Build (Release)
+        run: msbuild fortindwindows.sln /p:Configuration=Release /p:Platform="Any CPU" /m
+        shell: pwsh
+
+      - name: Install WiX CLI
+        # Pinned below v6 deliberately - v7 blocks every command behind the
+        # Open Source Maintenance Fee EULA (see comment in installer/Product.wxs).
+        run: dotnet tool install --global wix --version 4.0.6
+        shell: pwsh
+
+      - name: Build MSI
+        shell: pwsh
+        run: |
+          $version = "1.0.0.$env:GITHUB_RUN_NUMBER"
+          wix build installer\Product.wxs -d BuildOutputDir="bin\Release" -d ProductVersion="$version" -o installer\fortindwindows.msi
+          if ($LASTEXITCODE -ne 0) { throw "wix build failed with exit code $LASTEXITCODE" }
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fortindwindows-installer
+          path: installer\fortindwindows.msi
+          if-no-files-found: error

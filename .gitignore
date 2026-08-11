@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# WiX installer build output
+installer/*.wixobj
+installer/*.wixpdb
+installer/*.msi
