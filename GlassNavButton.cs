@@ -114,6 +114,7 @@ namespace fortindwindows
             if (_glassMode)
             {
                 // Smaller glow 
+                GlassTextRenderer.DrawGlowText(g, textRect, Text, Font, Color.White, 3);
             }
             else
             {
