@@ -32,13 +32,15 @@ namespace fortindwindows
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.panelGlassNav = new System.Windows.Forms.Panel();
             this.tabControl1.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // tabControl1
-            // 
+            //
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -65,13 +67,19 @@ namespace fortindwindows
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
-            // 
+            this.panelGlassNav.BackColor = System.Drawing.Color.Black;
+            this.panelGlassNav.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelGlassNav.Height = 56;
+            this.panelGlassNav.Name = "panelGlassNav";
+            this.panelGlassNav.TabIndex = 1;
+            //
             // Form1
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.panelGlassNav);
             this.Name = "Form1";
             this.Text = "fort.ind (legacy)";
             this.tabControl1.ResumeLayout(false);
@@ -84,6 +92,7 @@ namespace fortindwindows
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.Panel panelGlassNav;
 
     }
 }

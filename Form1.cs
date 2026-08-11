@@ -12,9 +12,105 @@ namespace fortindwindows
 {
     public partial class Form1 : Form
     {
+        private const string TitleText = "fort.ind";
+
+        private readonly List<GlassNavButton> _navButtons = new List<GlassNavButton>();
+        private bool _glassActive;
+
         public Form1()
         {
             InitializeComponent();
+            DoubleBuffered = true;
+
+            BuildNavStrip();
+
+            tabControl1.SelectedIndexChanged += TabControl1_SelectedIndexChanged;
+            panelGlassNav.Paint += PanelGlassNav_Paint;
+        }
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            ApplyGlass();
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            base.WndProc(ref m);
+
+            if (m.Msg == AeroGlass.WM_DWMCOMPOSITIONCHANGED)
+            {
+                ApplyGlass();
+            }
+        }
+
+        private void ApplyGlass()
+        {
+            _glassActive = AeroGlass.ExtendFrame(this, 0, panelGlassNav.Height, 0, 0);
+
+            panelGlassNav.BackColor = _glassActive ? Color.Black : SystemColors.Control;
+
+            foreach (GlassNavButton button in _navButtons)
+            {
+                button.GlassMode = _glassActive;
+            }
+
+            panelGlassNav.Invalidate(true);
+        }
+
+        /// <summary>
+        /// Builds one nav button per existing TabPage
+        /// </summary>
+        private void BuildNavStrip()
+        {
+            const int buttonHeight = 32;
+            const int buttonWidth = 110;
+            const int gap = 6;
+            int x = 170; 
+            int y = (panelGlassNav.Height - buttonHeight) / 2;
+
+            foreach (TabPage page in tabControl1.TabPages)
+            {
+                TabPage capturedPage = page;
+
+                GlassNavButton button = new GlassNavButton();
+                button.Text = page.Text;
+                button.Size = new Size(buttonWidth, buttonHeight);
+                button.Location = new Point(x, y);
+                button.Selected = tabControl1.SelectedTab == page;
+                button.Click += delegate { tabControl1.SelectedTab = capturedPage; };
+
+                panelGlassNav.Controls.Add(button);
+                _navButtons.Add(button);
+
+                x += buttonWidth + gap;
+            }
+        }
+
+        private void TabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            for (int i = 0; i < _navButtons.Count && i < tabControl1.TabPages.Count; i++)
+            {
+                _navButtons[i].Selected = tabControl1.TabPages[i] == tabControl1.SelectedTab;
+            }
+        }
+
+        private void PanelGlassNav_Paint(object sender, PaintEventArgs e)
+        {
+            Rectangle titleRect = new Rectangle(16, 0, 145, panelGlassNav.Height);
+
+            using (Font titleFont = new Font("Segoe UI", 13f, FontStyle.Regular))
+            {
+                if (_glassActive)
+                {
+                    GlassTextRenderer.DrawGlowText(e.Graphics, titleRect, TitleText, titleFont, Color.White);
+                }
+                else
+                {
+                    TextRenderer.DrawText(e.Graphics, TitleText, titleFont, titleRect, SystemColors.ControlText,
+                        TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
+                }
+            }
         }
 
         private void tabPage1_Click(object sender, EventArgs e)
