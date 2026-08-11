@@ -113,8 +113,8 @@ namespace fortindwindows
             Rectangle textRect = Rectangle.Inflate(bounds, -10, 0);
             if (_glassMode)
             {
-                // Smaller glow 
-                GlassTextRenderer.DrawGlowText(g, textRect, Text, Font, Color.White, 3);
+
+                GlassTextRenderer.DrawGlowText(g, textRect, Text, Font, Color.White, 0);
             }
             else
             {

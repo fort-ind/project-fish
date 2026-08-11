@@ -79,9 +79,18 @@ namespace fortindwindows
                     {
                         NativeMethods.DTTOPTS options = new NativeMethods.DTTOPTS();
                         options.dwSize = Marshal.SizeOf(typeof(NativeMethods.DTTOPTS));
-                        options.dwFlags = NativeMethods.DTT_COMPOSITED | NativeMethods.DTT_GLOWSIZE | NativeMethods.DTT_TEXTCOLOR;
                         options.crText = ColorTranslator.ToWin32(color);
-                        options.iGlowSize = glowSize;
+
+                        uint textFlags = NativeMethods.DTT_COMPOSITED | NativeMethods.DTT_TEXTCOLOR;
+
+
+                        if (glowSize > 0)
+                        {
+                            textFlags |= NativeMethods.DTT_GLOWSIZE;
+                            options.iGlowSize = glowSize;
+                        }
+
+                        options.dwFlags = textFlags;
 
                         NativeMethods.RECT rect = new NativeMethods.RECT();
                         rect.Left = 0;
