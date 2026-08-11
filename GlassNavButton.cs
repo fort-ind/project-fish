@@ -16,8 +16,9 @@ namespace fortindwindows
 
         public GlassNavButton()
         {
+            // Deliberately NOT ControlStyles.OptimizedDoubleBuffer
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint |
-                      ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw, true);
+                      ControlStyles.ResizeRedraw, true);
             _glassMode = true;
             Cursor = Cursors.Hand;
             Font = new Font("Segoe UI", 9.5f);
@@ -72,8 +73,11 @@ namespace fortindwindows
 
             if (_glassMode)
             {
-                // transparent, so the glass behind this control shows through.
-                g.Clear(Color.Black);
+                
+                CompositingMode oldMode = g.CompositingMode;
+                g.CompositingMode = CompositingMode.SourceCopy;
+                g.Clear(Color.FromArgb(0, 0, 0, 0));
+                g.CompositingMode = oldMode;
             }
             else
             {
