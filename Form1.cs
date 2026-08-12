@@ -24,7 +24,7 @@ namespace fortindwindows
 
             BuildNavStrip();
 
-            tabControl1.SelectedIndexChanged += TabControl1_SelectedIndexChanged;
+            tabs.SelectedIndexChanged += TabControl1_SelectedIndexChanged;
             panelGlassNav.Paint += PanelGlassNav_Paint;
         }
 
@@ -69,7 +69,7 @@ namespace fortindwindows
             int x = 170; 
             int y = (panelGlassNav.Height - buttonHeight) / 2;
 
-            foreach (TabPage page in tabControl1.TabPages)
+            foreach (TabPage page in tabs.TabPages)
             {
                 TabPage capturedPage = page;
 
@@ -77,8 +77,8 @@ namespace fortindwindows
                 button.Text = page.Text;
                 button.Size = new Size(buttonWidth, buttonHeight);
                 button.Location = new Point(x, y);
-                button.Selected = tabControl1.SelectedTab == page;
-                button.Click += delegate { tabControl1.SelectedTab = capturedPage; };
+                button.Selected = tabs.SelectedTab == page;
+                button.Click += delegate { tabs.SelectedTab = capturedPage; };
 
                 panelGlassNav.Controls.Add(button);
                 _navButtons.Add(button);
@@ -89,9 +89,9 @@ namespace fortindwindows
 
         private void TabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            for (int i = 0; i < _navButtons.Count && i < tabControl1.TabPages.Count; i++)
+            for (int i = 0; i < _navButtons.Count && i < tabs.TabPages.Count; i++)
             {
-                _navButtons[i].Selected = tabControl1.TabPages[i] == tabControl1.SelectedTab;
+                _navButtons[i].Selected = tabs.TabPages[i] == tabs.SelectedTab;
             }
         }
 
@@ -118,6 +118,26 @@ namespace fortindwindows
         }
 
         private void tabPage1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tabPage2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
         {
 
         }
